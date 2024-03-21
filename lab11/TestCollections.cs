@@ -19,23 +19,11 @@ namespace lab11
         public TestCollections()
         {
             stack1 = new Stack<Emoji>();
-            for (int i = 0; i < 1000; i++)
-            {
-                AnimalEmoji e = new AnimalEmoji();
-                e.RandomInit();
-                stack1.Push(e);
-            }
-
             stack2 = new Stack<string>();
-            for (int i = 0; i < 1000; i++)
-            {
-                AnimalEmoji e = new AnimalEmoji();
-                e.RandomInit();
-                stack2.Push(e.ToString());
-            }
-
             dictionary1 = new Dictionary<Emoji, AnimalEmoji>();
-            for(int i = 0;i < 1000; i++)
+            dictionary2 = new Dictionary<string, AnimalEmoji>();
+
+            for (int i = 0; i < 1000; i++)
             {
                 try
                 {
@@ -43,275 +31,175 @@ namespace lab11
                     animalEmoji.RandomInit();
                     Emoji emoji = new Emoji(animalEmoji.Name, animalEmoji.Tag, animalEmoji.id.number);
                     dictionary1.Add(emoji, animalEmoji);
+                    dictionary2.Add(emoji.ToString(), animalEmoji);
+                    stack1.Push(animalEmoji);
+                    stack2.Push(animalEmoji.ToString());
                 }
-                catch(Exception ex)
+                catch(Exception e)
                 {
                     i--;
                 }
             }
+        }
 
-            dictionary2 = new Dictionary<string, AnimalEmoji>();
+        public double AveregeStackTime(string element)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            long all = 0;
+
             for (int i = 0; i < 1000; i++)
             {
-                try
-                {
-                    AnimalEmoji animalEmoji = new AnimalEmoji();
-                    animalEmoji.RandomInit();
-                    Emoji emoji = new Emoji(animalEmoji.Name, animalEmoji.Tag, animalEmoji.id.number);
-                    dictionary2.Add(emoji.ToString(), animalEmoji);
-                }
-                catch (Exception ex)
-                {
-                    i--;
-                }
+                sw.Restart();
+                this.stack2.Contains(element);
+                sw.Stop();
+
+                all += sw.ElapsedTicks; ;
             }
+
+            return (double)all / 1000;
+        }
+
+        public double AveregeStackTime(Emoji element)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            long all = 0;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                sw.Restart();
+                this.stack1.Contains(element);
+                sw.Stop();
+
+                all += sw.ElapsedTicks; ;
+            }
+
+            return (double)all / 1000;
+        }
+
+        public double AveregeDictionaryTime(Emoji element)
+        {
+            long all = 0;
+            Stopwatch sw = Stopwatch.StartNew();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                sw.Restart();
+                dictionary1.ContainsKey(element);
+                sw.Stop();
+
+                all += sw.ElapsedTicks; ;
+            }
+
+            return (double)all / 1000;
+        }
+
+        public double AveregeDictionaryTime(string element)
+        {
+            long all = 0;
+            Stopwatch sw = Stopwatch.StartNew();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                sw.Restart();
+                dictionary2.ContainsKey(element);
+                sw.Stop();
+
+                all += sw.ElapsedTicks; ;
+            }
+
+            return (double)all / 1000;
+        }
+
+        public double AveregeDictionaryTimeV(AnimalEmoji element)
+        {
+            long all = 0;
+            Stopwatch sw = Stopwatch.StartNew();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                sw.Restart();
+                dictionary1.ContainsValue(element);
+                sw.Stop();
+
+                all += sw.ElapsedTicks; ;
+            }
+
+            return (double)all / 1000;
         }
 
         public void Get1Time()
         {
-            Stopwatch sw = Stopwatch.StartNew();
-
             // Получение первого элемента (последнего добавленного элемента)
-            Emoji firstElement = stack1.Peek();
+            Emoji firstElement = (Emoji)stack1.Peek().Clone();
 
             // Получение последнего элемента (первого добавленного элемента)
-            Emoji lastElement = stack1.ToArray()[0];
+            Emoji lastElement = (Emoji)stack1.ToArray()[0].Clone();
 
             // Получение центрального элемента
-            Emoji centralElement = stack1.ToArray()[stack1.Count / 2];
+            Emoji centralElement = (Emoji)stack1.ToArray()[stack1.Count / 2].Clone();
 
             long all = 0;
 
-            Console.WriteLine("Время поиска (среднее за 100 замеров) в стеке 1");
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-                stack1.Contains(firstElement);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            Console.WriteLine($"Первый найден за {(double)all / 100}");
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-                stack1.Contains(lastElement);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            Console.WriteLine($"Последний найден за {(double)all / 100}");
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-                stack1.Contains(lastElement);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            Console.WriteLine($"Средний найден за {(double)all / 100}");
+            Console.WriteLine("Время поиска (среднее за 1000 замеров) в стеке 1");
+            Console.WriteLine($"Первый найден за {this.AveregeStackTime(firstElement)}");
+            Console.WriteLine($"Последний найден за {this.AveregeStackTime(lastElement)}");
+            Console.WriteLine($"Средний найден за {this.AveregeStackTime(centralElement)}");
         }
 
         public void Get2Time()
         {
-            Stopwatch sw = Stopwatch.StartNew();
-
             // Получение первого элемента (последнего добавленного элемента)
-            string firstElement = stack2.Peek();
+            string firstElement = (string)stack2.Peek();
 
             // Получение последнего элемента (первого добавленного элемента)
-            string lastElement = stack2.ToArray()[0];
+            string lastElement = (string)stack2.ToArray()[0];
 
             // Получение центрального элемента
-            string centralElement = stack2.ToArray()[stack1.Count / 2];
+            string centralElement = (string)((stack2.ToArray()[stack2.Count / 2]));
 
-            long all = 0;
 
-            Console.WriteLine("Время поиска (среднее за 100 замеров) в стеке 2");
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-                stack2.Contains(firstElement);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            Console.WriteLine($"Первый найден за {(double)all / 100}");
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-                stack2.Contains(lastElement);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            Console.WriteLine($"Последний найден за {(double)all / 100}");
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-                stack2.Contains(lastElement);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            Console.WriteLine($"Средний найден за {(double)all / 100}");
+            Console.WriteLine("Время поиска (среднее за 1000 замеров) в стеке 2");
+            Console.WriteLine($"Первый найден за {this.AveregeStackTime(firstElement)}");
+            Console.WriteLine($"Последний найден за {this.AveregeStackTime(lastElement)}");
+            Console.WriteLine($"Средний найден за {this.AveregeStackTime(centralElement)}");
         }
 
         public void Get3Time()
         {
-            Stopwatch sw = Stopwatch.StartNew();
-            Emoji firstKey = dictionary1.Keys.FirstOrDefault();
-            Emoji lastKey = dictionary1.Keys.LastOrDefault();
-            Emoji midKey = dictionary1.Keys.ElementAt(dictionary1.Count/2);
-            long all = 0;
-            bool ok1 = true;
+            Emoji firstKey = (Emoji)dictionary1.Keys.FirstOrDefault().Clone();
+            Emoji lastKey = (Emoji)dictionary1.Keys.LastOrDefault().Clone();
+            Emoji midKey = (Emoji)dictionary1.Keys.ElementAt(dictionary1.Count/2).Clone();
 
-            Console.WriteLine("Среднее время поиска по ключу(100 замеров) в словаре 1:");
+            AnimalEmoji firstValue = (AnimalEmoji)dictionary1[firstKey].Clone();
+            AnimalEmoji lastValue = (AnimalEmoji)dictionary1[lastKey].Clone();
+            AnimalEmoji midValue = (AnimalEmoji)dictionary1[midKey].Clone();    
 
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-
-                // Проверяем наличие первого ключа в словаре
-                ok1 = dictionary1.ContainsKey(firstKey);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-
-            if (ok1)
-            {
-                Console.WriteLine($"Первый найден за {(double)all / 100}");
-            }
-            else
-            {
-                Console.WriteLine($"Первый не найден за {(double)all / 100}");
-            }
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-
-                // Проверяем наличие первого ключа в словаре
-                ok1 = dictionary1.ContainsKey(lastKey);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            if (ok1)
-            {
-                Console.WriteLine($"Последний найден за {(double)all / 100}");
-            }
-            else
-            {
-                Console.WriteLine($"Последний не найден за {(double)all / 100}");
-            }
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-
-                // Проверяем наличие первого ключа в словаре
-                ok1 = dictionary1.ContainsKey(midKey);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            if (ok1)
-            {
-                Console.WriteLine($"В середине найден за {(double)all / 100}");
-            }
-            else
-            {
-                Console.WriteLine($"В середине не найден за {(double)all / 100}");
-            }
-
+            Console.WriteLine("Среднее время поиска по ключу(1000 замеров) в словаре 1:");
+            Console.WriteLine($"Первый ключ найден за {this.AveregeDictionaryTime(firstKey)}");
+            Console.WriteLine($"Последний ключ найден за {this.AveregeDictionaryTime(lastKey)}");
+            Console.WriteLine($"В середине ключ найден за {this.AveregeDictionaryTime(midKey)}");
+            Console.WriteLine($"Первое значение найдено за {this.AveregeDictionaryTimeV(firstValue)}");
+            Console.WriteLine($"Последнее значение найдено за {this.AveregeDictionaryTimeV(lastValue)}");
+            Console.WriteLine($"Среднее значение найдено за {this.AveregeDictionaryTimeV(midValue)}");
         }
-
-        
 
         public void Get4Time()
         {
-            Stopwatch sw = Stopwatch.StartNew();
-            string firstKey = ((Emoji)dictionary1.Values.FirstOrDefault()).ToString();
-            string lastKey = ((Emoji)dictionary1.Values.LastOrDefault()).ToString();
-            string midKey = ((Emoji)dictionary1.Values.ElementAt(dictionary1.Count / 2)).ToString();
-            long all = 0;
-            bool ok1 = true;
+            string firstKey = dictionary2.Keys.FirstOrDefault().ToString();
+            string lastKey = dictionary2.Keys.LastOrDefault().ToString();
+            string midKey = dictionary2.Keys.ElementAt(dictionary1.Count / 2).ToString();
 
-            Console.WriteLine("Среднее время поиска по ключу(100 замеров) в словаре 2:");
+            AnimalEmoji firstValue = (AnimalEmoji)dictionary2[firstKey].Clone();
+            AnimalEmoji lastValue = (AnimalEmoji)dictionary2[lastKey].Clone();
+            AnimalEmoji midValue = (AnimalEmoji)dictionary2[midKey].Clone();
 
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-
-                // Проверяем наличие первого ключа в словаре
-                ok1 = dictionary2.ContainsKey(firstKey);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-
-            if (ok1)
-            {
-                Console.WriteLine($"Первый найден за {(double)all / 100}");
-            }
-            else
-            {
-                Console.WriteLine($"Первый не найден за {(double)all / 100}");
-            }
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-
-                // Проверяем наличие первого ключа в словаре
-                ok1 = dictionary2.ContainsKey(lastKey);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            if (ok1)
-            {
-                Console.WriteLine($"Последний найден за {(double)all / 100}");
-            }
-            else
-            {
-                Console.WriteLine($"Последний не найден за {(double)all / 100}");
-            }
-            all = 0;
-
-            for (int i = 0; i < 100; i++)
-            {
-                sw.Restart();
-
-                // Проверяем наличие первого ключа в словаре
-                ok1 = dictionary2.ContainsKey(midKey);
-                sw.Stop();
-
-                all += sw.ElapsedTicks; ;
-            }
-            if (ok1)
-            {
-                Console.WriteLine($"В середине найден за {(double)all / 100}");
-            }
-            else
-            {
-                Console.WriteLine($"В середине не найден за {(double)all / 100}");
-            }
+            Console.WriteLine("Среднее время поиска по ключу(1000 замеров) в словаре 1:");
+            Console.WriteLine($"Первый ключ найден за {this.AveregeDictionaryTime(firstKey)}");
+            Console.WriteLine($"Последний ключ найден за {this.AveregeDictionaryTime(lastKey)}");
+            Console.WriteLine($"В середине ключ найден за {this.AveregeDictionaryTime(midKey)}");
+            Console.WriteLine($"Первое значение найдено за {this.AveregeDictionaryTimeV(firstValue)}");
+            Console.WriteLine($"Последнее значение найдено за {this.AveregeDictionaryTimeV(lastValue)}");
+            Console.WriteLine($"Среднее значение найдено за {this.AveregeDictionaryTimeV(midValue)}");
 
         }
     }

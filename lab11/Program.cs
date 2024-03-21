@@ -126,8 +126,9 @@ namespace lab11
 
             Console.WriteLine(FindCountOfSmile(hashTable));
 
-            PrintSmile(hashTable);
+            Console.WriteLine(PrintSmile(hashTable));
 
+            Console.WriteLine(PrintByName(hashTable));
             //ЗАДАНИЕ 2
 
             //инициализация
@@ -245,6 +246,7 @@ namespace lab11
             }
 
             //демонстрация
+
             foreach (var item in queueClone)
             {
                 Console.WriteLine(item);
@@ -287,35 +289,40 @@ namespace lab11
         }
 
         //вывод всех улыбающихся со степенью больше 5
-        static void PrintSmile(Hashtable ht)
+        static string PrintSmile(Hashtable ht)
         {
             int count = 0;
+            string result = "";
             foreach (var i in ht.Values)
             {
                 if (i is SmileEmoji s && s.Grade>=5)
                 {
-                    Console.WriteLine(s);
+                    result+=s.ToString();
                     count++;
                 }
             }
             if (count == 0)
-                Console.WriteLine("В листе нет улыбающихся эмоджи.");
+                return "В таблице нет улыбающихся эмоджи со степенью больше 5";
+            else
+                return result;
         }
 
         //вывод тэгов улыбающихся со степенью <3
-        static void PrintTag(Hashtable ht)
+        static string PrintByName(Hashtable ht)
         {
             int count = 0;
             foreach (var i in ht.Values)
             {
-                if (i is SmileEmoji e && e.Grade<=3)
+                if (i is SmileEmoji e && e.Name == "Улыбашка")
                 {
                     Console.WriteLine(e.Tag);
                     count++;
                 }
             }
             if (count == 0)
-                Console.WriteLine("В листе нет SmileEmoji");
+                return "В таблице нет SmileEmoji с именем Улыбашка";
+            else
+                return $"В таблице {count} SmileEmoji с именем Улыбашка";
         }
 
         //ФУНКЦИИ ЗАДАНИЯ 2
@@ -335,35 +342,40 @@ namespace lab11
         }
 
         //вывод всех улыбающихся
-        static void PrintSmile(Queue<Emoji> list)
+        static string PrintSmile(Queue<Emoji> list)
         {
             int count = 0;
+            string result = "";
             foreach (var i in list)
             {
                 if (i is SmileEmoji s)
                 {
-                    Console.WriteLine(s);
+                    result+= s.ToString();
                     count++;
                 }
             }
             if (count == 0)
-                Console.WriteLine("В листе нет улыбающихся эмоджи.");
+                return "В листе нет улыбающихся эмоджи.";
+            else
+                return result;
         }
 
         //поиск всех тэгов животных
-        static void PrintFaceTag(Queue<Emoji> list)
+        static string PrintFaceTag(Queue<Emoji> list)
         {
             int count = 0;
+            string result = "";
             foreach (var i in list)
             {
                 if (i is FaceEmoji)
                 {
-                    Console.WriteLine(i.Tag);
+                    result+=i.Tag + $"\n";
                     count++;
                 }
             }
             if (count == 0)
-                Console.WriteLine("В листе нет FaceEmoji");
+                return "В листе нет FaceEmoji";
+            else return result;
         }
 
        
